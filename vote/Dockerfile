@@ -11,13 +11,14 @@ WORKDIR /usr/local/app
 
 # Install our requirements.txt
 COPY requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    ddtrace
 
 # dev defines a stage for development, where it'll watch for filesystem changes
 FROM base AS dev
 RUN pip install watchdog
 ENV FLASK_ENV=development
-CMD ["python", "app.py"]
+CMD ["dtrace-run","python", "app.py"]
 
 # final defines the stage that will bundle the application for production
 FROM base AS final
