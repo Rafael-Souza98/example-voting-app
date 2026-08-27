@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   labels:
     app: redis
+    team: voting-app
+    env: production
   name: redis
 spec:
   replicas: 1
@@ -13,10 +15,19 @@ spec:
     metadata:
       labels:
         app: redis
+        team: voting-app
+        env: production
     spec:
       containers:
       - image: redis:alpine
         name: redis
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
         ports:
         - containerPort: 6379
           name: redis

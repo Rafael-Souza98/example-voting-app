@@ -1,0 +1,21 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: check-labels
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  validations:
+    - message: label 'app' is required
+      expression: "'app' in object.metadata.?labels.orValue([])"
+    - message: label 'team' is required
+      expression: "'team' in object.metadata.?labels.orValue([])"
+    - message: label 'env' is required
+      expression: "'env' in object.metadata.?labels.orValue([])"
+  

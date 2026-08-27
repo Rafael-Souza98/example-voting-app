@@ -1,7 +1,7 @@
 apiVersion: policies.kyverno.io/v1
 kind: ValidatingPolicy
 metadata:
-  name: check-labels
+  name: run-as-non-root
 spec:
   validationActions:
     - Deny
@@ -12,5 +12,5 @@ spec:
         operations: [CREATE, UPDATE]
         resources: [pods]
   validations:
-    - message: label 'environment' is required
-      expression: "'environment' in object.metadata.?labels.orValue([])"
+    - message: container must run as non-root user
+      expression: "object.spec.?securityContext.?runAsNonRoot.orValue(false) == true"

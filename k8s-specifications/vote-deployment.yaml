@@ -3,10 +3,11 @@ kind: Deployment
 metadata:
   labels:
     app: vote
-    environment: production
+    team: voting-app
+    env: production
   name: vote
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: vote
@@ -14,10 +15,19 @@ spec:
     metadata:
       labels:
         app: vote
+        team: voting-app
+        env: production
     spec:
       containers:
       - image: dockersamples/examplevotingapp_vote
         name: vote
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
         ports:
         - containerPort: 80
           name: vote

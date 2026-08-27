@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   labels:
     app: db
+    team: voting-app
+    env: production
   name: db
 spec:
   replicas: 1
@@ -13,10 +15,19 @@ spec:
     metadata:
       labels:
         app: db
+        team: voting-app
+        env: production
     spec:
       containers:
       - image: postgres:15-alpine
         name: postgres
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
         env:
         - name: POSTGRES_USER
           value: postgres
