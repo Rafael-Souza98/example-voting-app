@@ -8,7 +8,11 @@ install-kyverno:
 	@helm install kyverno ./kyverno-chart/kyverno -n kyverno --create-namespace
 
 delete-cluster:
-	@kind delete cluster
+	@kind delete clusters cluster-apps
 
+setup:
+	@make create-cluster
+	@make deploy-apps
+	@make install-kyverno
 
 	
