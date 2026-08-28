@@ -38,40 +38,6 @@ services:
       - front-tier
       - back-tier
 
-  datadog:
-    image: gcr.io/datadoghq/agent
-    container_name: datadog
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /proc/:/host/proc/:ro
-      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-      - /etc/os-release:/host/etc/os-release:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-    environment:
-      - DD_SITE=datadoghq.com
-      - DD_API_KEY
-      - DD_CONTAINER_LABELS_AS_TAGS=true
-      - DD_LOGS_ENABLED=true
-      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
-      - DD_PROCESS_AGENT_ENABLED=true
-      - DD_APM_ENABLED=true
-    ports:
-      - 8126:8126/tcp
-      - 8125:8125
-    cap_add:
-      - SYS_ADMIN
-      - SYS_RESOURCE
-      - SYS_PTRACE
-      - NET_ADMIN
-      - NET_BROADCAST
-      - NET_RAW
-      - IPC_LOCK
-      - CHOWN
-    security_opt:
-      - apparmor:unconfined
-    networks:
-      - front-tier
-      - back-tier
   result:
     build: ./result
     # use nodemon rather than node for local dev
@@ -85,7 +51,7 @@ services:
     volumes:
       - ./result:/usr/local/app
     ports:
-      - "8081:80"
+      - "8081:8081"
       - "127.0.0.1:9229:9229"
     environment:
       - DD_ENV=prod

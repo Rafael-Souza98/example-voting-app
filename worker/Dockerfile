@@ -35,6 +35,9 @@ ENV DD_DOTNET_TRACER_HOME=/opt/datadog
 
 # app image
 FROM mcr.microsoft.com/dotnet/runtime:7.0
+RUN groupadd -g 1001 worker-group && \
+    useradd -u 1001 -g worker-group -m worker
 WORKDIR /app
 COPY --from=build /app .
+USER worker
 ENTRYPOINT ["dotnet", "Worker.dll"]

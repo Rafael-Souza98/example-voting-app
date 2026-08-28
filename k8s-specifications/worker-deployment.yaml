@@ -7,7 +7,7 @@ metadata:
     env: production
   name: worker
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: worker
@@ -19,7 +19,7 @@ spec:
         env: production
     spec:
       containers:
-      - image: dockersamples/examplevotingapp_worker
+      - image: worker:1.0
         name: worker
         resources:
           requests:

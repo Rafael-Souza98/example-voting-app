@@ -12,14 +12,18 @@ RUN npm install -g nodemon
 
 COPY package*.json ./
 
+RUN groupadd -g 1001 result-group && \
+    useradd -u 1001 -g result-group -m result
+
 RUN npm ci && \
+
  npm cache clean --force && \
  mv /usr/local/app/node_modules /node_modules
 
 COPY . .
 
-ENV PORT=80
-EXPOSE 80
-
+ENV PORT=8081
+EXPOSE 8081
+USER result
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "server.js"]

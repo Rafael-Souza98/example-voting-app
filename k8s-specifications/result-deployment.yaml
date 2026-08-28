@@ -19,7 +19,7 @@ spec:
         env: production
     spec:
       containers:
-      - image: dockersamples/examplevotingapp_result
+      - image: result:1.0
         name: result
         resources:
           requests:

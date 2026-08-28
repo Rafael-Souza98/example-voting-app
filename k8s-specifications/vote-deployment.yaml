@@ -7,7 +7,7 @@ metadata:
     env: production
   name: vote
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: vote
@@ -19,7 +19,7 @@ spec:
         env: production
     spec:
       containers:
-      - image: dockersamples/examplevotingapp_vote
+      - image: vote:1.0
         name: vote
         resources:
           requests:

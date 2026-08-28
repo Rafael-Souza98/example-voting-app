@@ -18,16 +18,18 @@ RUN pip install --no-cache-dir -r requirements.txt \
 FROM base AS dev
 RUN pip install watchdog
 ENV FLASK_ENV=development
-CMD ["dtrace-run","python", "app.py"]
+CMD ["ddtrace-run", "python", "app.py"]
 
 # final defines the stage that will bundle the application for production
 FROM base AS final
 
 # Copy our code from the current folder to the working directory inside the container
 COPY . .
-
+RUN groupadd -g 1001 vote-group && \
+    useradd -u 1001 -g vote-group -m vote
+USER vote
 # Make port 80 available for links and/or publish
-EXPOSE 80
+EXPOSE 8080
 
 # Define our command to be run when launching the container
 CMD ["gunicorn", "app:app", "-b", "0.0.0.0:80", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
