@@ -1,0 +1,40 @@
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
+
+metadata:
+  name: enforce-container-security
+
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - apps
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - deployments
+
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: |
+          Object{
+            spec: Object.spec{
+              template: Object.spec.template{
+                spec: Object.spec.template.spec{
+                  containers: object.spec.template.spec.containers.map(container,
+                    Object.spec.template.spec.containers{
+                      name: container.name,
+                      securityContext: Object.spec.template.spec.containers.securityContext{
+                        runAsNonRoot: true,
+                        allowPrivilegeEscalation: false
+                      }
+                    }
+                  )
+                }
+              }
+            }
+          }

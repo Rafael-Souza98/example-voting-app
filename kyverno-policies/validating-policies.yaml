@@ -1,0 +1,74 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: check-labels
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  validations:
+    - message: label 'app' is required
+      expression: "'app' in object.metadata.?labels.orValue([])"
+    - message: label 'team' is required
+      expression: "'team' in object.metadata.?labels.orValue([])"
+    - message: label 'env' is required
+      expression: "'env' in object.metadata.?labels.orValue([])"
+
+---
+
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: check-security-context
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  validations:
+    - message: "All containers must have runAsNonRoot set to true."
+      expression: >
+        object.spec.containers.all(c,
+          has(c.securityContext) &&
+          has(c.securityContext.runAsNonRoot) &&
+          c.securityContext.runAsNonRoot == true)
+
+    - message: Allowprivilegeescalation must be set to false
+      expression: >
+          object.spec.containers.all(c,
+            has(c.securityContext) &&
+            has(c.securityContext.allowPrivilegeEscalation) &&
+            c.securityContext.allowPrivilegeEscalation == false
+          )
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: requests-and-limits
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+
+  validations:
+    - message: "Container must have resource requests and limits defined"
+      expression: "object.spec.containers.all(c, has(c.resources) && has(c.resources.requests) && has(c.resources.limits))"

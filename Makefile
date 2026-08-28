@@ -12,7 +12,6 @@ delete-cluster:
 
 setup:
 	@make create-cluster
-	@make deploy-apps
 	@make install-kyverno
 
 	
